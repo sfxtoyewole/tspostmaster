@@ -26,12 +26,6 @@ public class PostComment extends BaseEntity{
     private String text;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
     private String commenter;
 
     @ManyToOne

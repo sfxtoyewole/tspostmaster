@@ -1,44 +1,76 @@
 package com.ts.postmaster.security;
 
+import com.ts.postmaster.exception.CustomException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 
 /**
  * @author toyewole
  */
+@Slf4j
 @Service
 public class JwtProvider {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    public String generateToken (Authentication authentication){
+
+    private Key key;
+    @PostConstruct
+    protected void init() {
+        key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
+
+    public String generateToken(Authentication authentication) {
+
         User principal = (User) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject(principal.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key)
                 .compact();
+
 
     }
 
 
-    public boolean validateToken (String jwt){
-        Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(jwt);
-        return true;
+    public boolean validateToken(String jwt) {
+
+        try {
+            Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(jwt);
+
+            return true;
+
+        } catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException JWT Token Error ", e);
+            throw new CustomException("User Token Has Expired", HttpStatus.UNAUTHORIZED);
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("JWT Token Validation Error ", e);
+            throw new CustomException("Invalid User Token Supplied", HttpStatus.UNAUTHORIZED);
+        }catch (Exception e){
+            return false;
+        }
     }
 
     public String getUsernameFromJwt(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
-                .parseClaimsJws(token )
+                .parseClaimsJws(token)
                 .getBody();
 
 

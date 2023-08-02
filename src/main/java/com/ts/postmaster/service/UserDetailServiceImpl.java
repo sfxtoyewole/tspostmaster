@@ -27,13 +27,14 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .orElseThrow(()-> new UsernameNotFoundException("No User Found "+ username));
 
 
-        return com.ts.postmaster.dto.UserDetails.builder().
-                username(username)
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
                 .password(user.getPassword())
-                .enabled(true)
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .authorities(getAuthorities("ROLE_ADMIN"))
+                .disabled(false)
+                .accountExpired(false)
+                .accountLocked(false)
+                .roles("ADMIN")
+                .disabled(false)
                 .build();
     }
 

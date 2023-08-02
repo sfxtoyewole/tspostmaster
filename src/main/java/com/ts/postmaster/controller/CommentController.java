@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -24,23 +25,22 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("{postId}/")
 public class CommentController {
 
     private final CommentService commentService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public ApiResp<Long> postComment(@PathVariable Long postId, @RequestBody CommentDto commentDto) {
+    @PostMapping("{postId}/comment")
+    public ApiResp<Long> postComment(@PathVariable Long postId, @RequestBody @Valid CommentDto commentDto) {
         return commentService.createComment(commentDto, postId);
     }
 
-    @GetMapping()
+    @GetMapping("{postId}/comment")
     public ApiResp<DataTableResp<PostComment>> getPosts(@PathVariable Long postId, @RequestParam int size, @RequestParam int index) {
         return commentService.getComments(postId ,index, size);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("comment/{id}")
     public ApiResp<PostComment> getPostById(@PathVariable @RequestBody Long id) {
         return commentService.getCommentById(id);
     }

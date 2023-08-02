@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public enum ResponseEnum {
 
-    SUCCESS(Boolean.TRUE, "Request proccessed successfully"),
+    SUCCESS(Boolean.TRUE, "Request processed successfully"),
+    ERROR(Boolean.FALSE, "Error occurred processing request"),
     ;
 
     private boolean status;

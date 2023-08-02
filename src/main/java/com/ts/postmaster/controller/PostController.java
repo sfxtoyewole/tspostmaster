@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author toyewole
@@ -39,7 +40,7 @@ public class PostController {
     }
 
     @GetMapping()
-    public ApiResp<DataTableResp<BlogPost>> getPosts(@RequestParam String title, @RequestParam int size, @RequestParam int index) {
+    public ApiResp<DataTableResp<BlogPost>> getPosts(@RequestParam Optional<String> title, @RequestParam int size, @RequestParam int index) {
         return postService.getPosts(title, index, size);
     }
 

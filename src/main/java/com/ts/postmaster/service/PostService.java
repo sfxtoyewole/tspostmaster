@@ -45,9 +45,9 @@ public class PostService {
     }
 
     @TrackTime
-    public ApiResp<DataTableResp<BlogPost> > getPosts(String title, int index, int size) {
+    public ApiResp<DataTableResp<BlogPost> > getPosts(Optional<String> titleOpt, int index, int size) {
 
-        var spec = Specification.where(BlogPostFilter.likeTitle(title));
+        var spec = Specification.where(BlogPostFilter.likeTitle(titleOpt.orElse(null)));
 
         Slice<BlogPost> blogPost = iBlogPostRepository.findAll(spec, Pageable.ofSize(size).withPage(index));
 
@@ -62,7 +62,7 @@ public class PostService {
     public ApiResp<BlogPost> getPostById(Long id) {
 
         var post = iBlogPostRepository.findById(id)
-                .orElseThrow(() -> new CustomException("Comment with this id is not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("Post with this id is not found", HttpStatus.NOT_FOUND));
 
         return ApiResp.getApiResponse(ResponseEnum.SUCCESS, post);
     }

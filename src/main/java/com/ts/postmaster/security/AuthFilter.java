@@ -33,16 +33,17 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String bearerToken = request.getHeader("Authorization");
 
-        if(StringUtils.isNotBlank(bearerToken) && !bearerToken.startsWith("Bearer ")) {
+        if(StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer ")) {
 
 
             String token = bearerToken.substring(7);
 
             if (jwtProvider.validateToken(token)) {
+
                 String username = jwtProvider.getUsernameFromJwt(token);
                 UserDetails userDetails = ipmUserRepository.getUserDetailByEmail(username);
 
-                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("role"); //TODO get the role from jwt
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("Admin"); //TODO get the role from jwt
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, Collections.singletonList(simpleGrantedAuthority));
 
