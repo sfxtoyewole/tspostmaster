@@ -1,6 +1,5 @@
-package com.ts.postmaster.model;
+package com.ts.postmaster.dao.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +31,8 @@ public class PostComment extends BaseEntity{
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private PMUser commenter;
+    @Column(nullable = false)
+    private String commenter;
 
     @ManyToOne
     @JoinColumn(name = "BLOG_POST_ID", nullable = false)

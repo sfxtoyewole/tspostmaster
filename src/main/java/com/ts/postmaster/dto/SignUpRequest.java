@@ -1,6 +1,5 @@
 package com.ts.postmaster.dto;
 
-import com.ts.postmaster.model.PMUser;
 import lombok.Data;
 
 import javax.validation.constraints.Email;

@@ -1,6 +1,6 @@
 package com.ts.postmaster.security;
 
-import com.ts.postmaster.repository.IPMUserRepository;
+import com.ts.postmaster.dao.repository.IPMUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 
 /**
@@ -34,7 +33,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String bearerToken = request.getHeader("Authorization");
 
-        if(StringUtils.isBlank(bearerToken) || !bearerToken.startsWith("Bearer ")) {
+        if(StringUtils.isNotBlank(bearerToken) && !bearerToken.startsWith("Bearer ")) {
 
 
             String token = bearerToken.substring(7);
@@ -53,8 +52,9 @@ public class AuthFilter extends OncePerRequestFilter {
 
             }
 
-            filterChain.doFilter(request, response);
+
 
         }
+        filterChain.doFilter(request, response);
     }
 }

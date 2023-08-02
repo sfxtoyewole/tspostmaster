@@ -1,6 +1,7 @@
 package com.ts.postmaster.dao.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import javax.persistence.Table;
 /**
  * @author toyewole
  */
-
+@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @Table(name = "PM_USER")
