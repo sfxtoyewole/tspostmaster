@@ -1,4 +1,4 @@
-package com.ts.postmaster.model;
+package com.ts.postmaster.dao.model;
 
 import lombok.Getter;
 import lombok.Setter;
