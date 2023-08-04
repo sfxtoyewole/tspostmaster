@@ -14,8 +14,6 @@ import com.ts.postmaster.exception.CustomException;
 import com.ts.postmaster.utility.CommonLogic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

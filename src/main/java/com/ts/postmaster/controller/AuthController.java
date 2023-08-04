@@ -29,7 +29,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/access")
 public class AuthController {
 
     private final UserService userService;

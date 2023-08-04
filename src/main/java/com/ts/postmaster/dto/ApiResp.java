@@ -25,7 +25,7 @@ public class ApiResp<T> {
 
     public static <T> ApiResp<T> getApiResponse(ResponseEnum responseEnum, T data) {
         var resp = new ApiResp<T>();
-        resp.setMessage(resp.getMessage());
+        resp.setMessage(responseEnum.getMessage());
         resp.setStatus(responseEnum.isStatus());
         resp.setData(data);
 

@@ -13,6 +13,6 @@ public class CommentFilter {
         if (postId == null ) {
             return null;
         }
-        return (root, query, cb) -> cb.equal(root.get("blogPost.id"), postId);
+        return (root, query, cb) -> cb.equal(root.get("postId"), postId);
     }
 }

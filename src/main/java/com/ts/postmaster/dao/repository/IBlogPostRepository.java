@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ import java.util.List;
 @Repository
 public interface IBlogPostRepository extends JpaRepository<BlogPost, Long> , JpaSpecificationExecutor<BlogPost> {
 
+    @Transactional
     @Query("SELECT b " +
             "FROM BlogPost b " +
             "WHERE (:title is null OR b.title LIKE %:title%) " +

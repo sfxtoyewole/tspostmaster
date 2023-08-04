@@ -41,7 +41,7 @@ public class CommentService {
         var currentUser = Optional.ofNullable(userService.getCurrentUser())
                 .orElseThrow(() -> new CustomException("Kindly login to comment ", HttpStatus.FORBIDDEN));
 
-        comment.setCommenter(currentUser.getUsername());
+        comment.setAuthor(currentUser.getUsername());
 
         iCommentRepository.save(comment);
 

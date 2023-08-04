@@ -23,7 +23,6 @@ public class CommentDto {
         var comment = new PostComment();
         comment.setText(content);
         comment.setPostId(postId);
-        comment.setId(id);
 
         return comment;
     }
