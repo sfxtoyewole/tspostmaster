@@ -28,8 +28,7 @@ public class PostComment extends BaseEntity{
     @Column(nullable = false)
     private String commenter;
 
-    @ManyToOne
-    @JoinColumn(name = "BLOG_POST_ID", nullable = false)
-    private BlogPost blogPost;
+    @Column(nullable = false)
+    private Long postId;
 
 }

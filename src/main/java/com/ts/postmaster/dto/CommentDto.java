@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CommentDto {
 
+    private Long id;
     private Long postId;
     private Long commentId;
 
@@ -21,6 +22,8 @@ public class CommentDto {
     public PostComment transformToCommentEntity(){
         var comment = new PostComment();
         comment.setText(content);
+        comment.setPostId(postId);
+        comment.setId(id);
 
         return comment;
     }

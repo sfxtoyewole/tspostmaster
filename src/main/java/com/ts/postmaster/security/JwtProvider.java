@@ -37,13 +37,18 @@ public class JwtProvider {
 
         User principal = (User) authentication.getPrincipal();
 
+        return getJwtToken(principal.getUsername());
+
+
+    }
+
+    public String getJwtToken(String principal) {
+
         return Jwts.builder()
-                .setSubject(principal.getUsername())
+                .setSubject(principal)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key)
                 .compact();
-
-
     }
 
 
@@ -58,10 +63,10 @@ public class JwtProvider {
 
         } catch (ExpiredJwtException e) {
             log.error("ExpiredJwtException JWT Token Error ", e);
-            throw new CustomException("User Token Has Expired", HttpStatus.UNAUTHORIZED);
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
             log.error("JWT Token Validation Error ", e);
-            throw new CustomException("Invalid User Token Supplied", HttpStatus.UNAUTHORIZED);
+            return false;
         }catch (Exception e){
             return false;
         }

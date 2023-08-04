@@ -31,8 +31,6 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ApiResp<Long> createPost(@RequestBody @Valid PostDto postDto) {
@@ -40,12 +38,11 @@ public class PostController {
     }
 
     @GetMapping()
-    public ApiResp<DataTableResp<BlogPost>> getPosts(@RequestParam Optional<String> title, @RequestParam int size, @RequestParam int index) {
+    public ApiResp<DataTableResp<IPostView>> getPosts(@RequestParam Optional<String> title, @RequestParam int size, @RequestParam int index) {
         return postService.getPosts(title, index, size);
     }
-
     @GetMapping("/{id}")
-    public ApiResp<BlogPost> getSinglePost(@PathVariable @RequestBody Long id) {
+    public ApiResp<PostDto> getSinglePost(@PathVariable @RequestBody Long id) {
         return postService.getPostById(id);
     }
 

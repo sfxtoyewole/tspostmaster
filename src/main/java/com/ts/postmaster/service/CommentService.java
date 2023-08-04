@@ -36,7 +36,7 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException("Post ID cannot be found", HttpStatus.BAD_REQUEST));
 
         var comment = commentDto.transformToCommentEntity();
-        comment.setBlogPost(post);
+        comment.setPostId(post.getId());
 
         var currentUser = Optional.ofNullable(userService.getCurrentUser())
                 .orElseThrow(() -> new CustomException("Kindly login to comment ", HttpStatus.FORBIDDEN));
@@ -44,6 +44,7 @@ public class CommentService {
         comment.setCommenter(currentUser.getUsername());
 
         iCommentRepository.save(comment);
+
         return ApiResp.getApiResponse(ResponseEnum.SUCCESS, comment.getId());
     }
 

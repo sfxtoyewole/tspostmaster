@@ -1,6 +1,7 @@
 package com.ts.postmaster.service;
 
 import com.ts.postmaster.dto.ApiResp;
+import com.ts.postmaster.dto.AuthDto;
 import com.ts.postmaster.dto.SignInReq;
 import com.ts.postmaster.dto.SignUpRequest;
 import com.ts.postmaster.dto.enums.ResponseEnum;
@@ -44,7 +45,7 @@ public class UserService {
         return ipmUserRepository.existsPMUserByEmail(email);
     }
 
-    public ApiResp<PMUser> createUser(SignUpRequest signUpRequest) {
+    public ApiResp<AuthDto> createUser(SignUpRequest signUpRequest) {
         if (isUserExists(signUpRequest.getUsername())) {
             throw new CustomException("Username is already taken!", HttpStatus.CONFLICT);
         }
@@ -61,16 +62,20 @@ public class UserService {
 
         ipmUserRepository.save(user);
 
-        ApiResp<PMUser> response = new ApiResp<>();
+        AuthDto authDto = new AuthDto();
+        authDto.setToken(jwtProvider.getJwtToken(user.getEmail()));
+        authDto.setUsername(user.getEmail());
+
+        ApiResp<AuthDto> response = new ApiResp<>();
         response.setMessage("Account created successfully");
         response.setStatus(Boolean.TRUE);
-        response.setData(user);
+        response.setData(authDto);
 
         return response;
     }
 
 
-    public ApiResp<String> signIn(SignInReq signInReq) {
+    public ApiResp<AuthDto> signIn(SignInReq signInReq) {
 
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInReq.getUsername(), signInReq.getPassword()));
 
@@ -78,7 +83,11 @@ public class UserService {
 
         var token = jwtProvider.generateToken(authenticate);
 
-        return ApiResp.getApiResponse(ResponseEnum.SUCCESS, token);
+        AuthDto userDto = new AuthDto();
+        userDto.setUsername(signInReq.getUsername());
+        userDto.setToken(token);
+
+        return ApiResp.getApiResponse(ResponseEnum.SUCCESS, userDto);
     }
 
     public UserDetails getCurrentUser() {

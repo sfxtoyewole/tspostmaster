@@ -11,6 +11,7 @@ import com.ts.postmaster.dto.enums.ResponseEnum;
 import com.ts.postmaster.dao.model.BlogPost;
 import com.ts.postmaster.dao.repository.IBlogPostRepository;
 import com.ts.postmaster.exception.CustomException;
+import com.ts.postmaster.utility.CommonLogic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -45,25 +46,31 @@ public class PostService {
     }
 
     @TrackTime
-    public ApiResp<DataTableResp<BlogPost> > getPosts(Optional<String> titleOpt, int index, int size) {
+    public ApiResp<DataTableResp<IPostView> > getPosts(Optional<String> titleOpt, int index, int size) {
 
-        var spec = Specification.where(BlogPostFilter.likeTitle(titleOpt.orElse(null)));
 
-        Slice<BlogPost> blogPost = iBlogPostRepository.findAll(spec, Pageable.ofSize(size).withPage(index));
+        List<IPostView> blogPost = iBlogPostRepository.findAllBlogPost(titleOpt.orElse(null), Pageable.ofSize(size).withPage(index));
 
-        DataTableResp<BlogPost> dataTableResp = new DataTableResp<>();
-        dataTableResp.setData(blogPost.getContent());
-        dataTableResp.setHasNext(blogPost.hasNext());
+        DataTableResp<IPostView> dataTableResp = new DataTableResp<>();
+        dataTableResp.setData(blogPost);
+        dataTableResp.setHasNext(blogPost.size() == size);
 
         return ApiResp.getApiResponse(ResponseEnum.SUCCESS, dataTableResp);
     }
 
     @TrackTime
-    public ApiResp<BlogPost> getPostById(Long id) {
+    public ApiResp<PostDto> getPostById(Long id) {
 
         var post = iBlogPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Post with this id is not found", HttpStatus.NOT_FOUND));
 
-        return ApiResp.getApiResponse(ResponseEnum.SUCCESS, post);
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setContent(post.getContent());
+        postDto.setImageBase64(CommonLogic.toBase64(post.getImg()));
+        postDto.setTitle(post.getTitle());
+
+        return ApiResp.getApiResponse(ResponseEnum.SUCCESS, postDto);
+
     }
 }
