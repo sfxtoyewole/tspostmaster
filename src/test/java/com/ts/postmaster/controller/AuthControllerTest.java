@@ -4,7 +4,7 @@ package com.ts.postmaster.controller;
  * @author toyewole
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.ts.postmaster.dto.ApiResp;
 import com.ts.postmaster.dto.AuthDto;
 import com.ts.postmaster.dto.SignInReq;
@@ -38,6 +38,7 @@ class AuthControllerTest {
     private AuthController authController;
 
     private MockMvc mockMvc;
+    private static final Gson gson = new Gson();
 
     @BeforeEach
     void setUp() {
@@ -63,7 +64,7 @@ class AuthControllerTest {
         // When
         ResultActions result = mockMvc.perform(post("/access/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(signUpRequest)));
+                .content(gson.toJson(signUpRequest)));
 
         // Then
 
@@ -91,7 +92,7 @@ class AuthControllerTest {
         // When
         ResultActions result = mockMvc.perform(post("/access/signin")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(signInReq)));
+                        .content(gson.toJson(signInReq)));
 
         // The
         result.andExpect(MockMvcResultMatchers.status().isOk());
@@ -103,13 +104,6 @@ class AuthControllerTest {
         assertEquals("testToken", authToken);
     }
 
-    // Helper method to convert objects to JSON string
-    private String asJsonString(Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
 

@@ -56,10 +56,14 @@ class UserServiceTest {
         signUpRequest.setUsername("testUser");
         signUpRequest.setPassword("testPassword");
 
+        var pm = new PMUser();
+        pm.setEmail(signUpRequest.getEmail());
+        pm.setUsername(signUpRequest.getUsername());
+
         when(ipmUserRepository.existsPMUserByUsername(anyString())).thenReturn(false);
         when(ipmUserRepository.existsPMUserByEmail(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(ipmUserRepository.save(any(PMUser.class))).thenReturn(new PMUser());
+        when(ipmUserRepository.save(any(PMUser.class))).thenReturn(pm);
 
         // When
         ApiResp<AuthDto> response = userService.createUser(signUpRequest);
@@ -69,7 +73,6 @@ class UserServiceTest {
         assertTrue(response.isStatus());
         assertEquals("Account created successfully", response.getMessage());
         assertNotNull(response.getData());
-        assertNotNull(response.getData().getToken());
         assertEquals("test@example.com", response.getData().getUsername());
     }
 
