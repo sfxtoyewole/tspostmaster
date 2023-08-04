@@ -17,13 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,23 +61,17 @@ class AuthControllerTest {
         when(userService.createUser(any())).thenReturn(response);
 
         // When
-        MvcResult mvcResult = mockMvc.perform(post("/user/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(signUpRequest)))
-                .andReturn();
+        ResultActions result = mockMvc.perform(post("/access/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(signUpRequest)));
 
         // Then
-        int statusCode = mvcResult.getResponse().getStatus();
-        assertEquals(HttpStatus.CREATED.value(), statusCode);
 
-        String responseContent = mvcResult.getResponse().getContentAsString();
-        ApiResp<AuthDto> apiResponse = new ObjectMapper().readValue(responseContent, ApiResp.class);
-        assertNotNull(apiResponse);
-        assertTrue(apiResponse.isStatus());
-        assertEquals(ResponseEnum.SUCCESS.getMessage(), apiResponse.getMessage());
-        assertNotNull(apiResponse.getData());
-        assertNotNull(apiResponse.getData().getToken());
-        assertEquals("testUser", apiResponse.getData().getUsername());
+        result.andExpect(MockMvcResultMatchers.status().isCreated());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.status").isBoolean());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.data.token").isNotEmpty());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.data.username").value("testUser"));
+
     }
 
     @Test
@@ -95,25 +89,17 @@ class AuthControllerTest {
         when(userService.signIn(any())).thenReturn(response);
 
         // When
-        MvcResult mvcResult = mockMvc.perform(post("/user/signin")
+        ResultActions result = mockMvc.perform(post("/access/signin")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(signInReq)))
-                .andReturn();
+                        .content(asJsonString(signInReq)));
 
-        // Then
-        int statusCode = mvcResult.getResponse().getStatus();
-        assertEquals(HttpStatus.OK.value(), statusCode);
+        // The
+        result.andExpect(MockMvcResultMatchers.status().isOk());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.status").isBoolean());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.data.token").isNotEmpty());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.data.username").value("testUser"));
 
-        String responseContent = mvcResult.getResponse().getContentAsString();
-        ApiResp<AuthDto> apiResponse = new ObjectMapper().readValue(responseContent, ApiResp.class);
-        assertNotNull(apiResponse);
-        assertTrue(apiResponse.isStatus());
-        assertEquals(ResponseEnum.SUCCESS.getMessage(), apiResponse.getMessage());
-        assertNotNull(apiResponse.getData());
-        assertNotNull(apiResponse.getData().getToken());
-        assertEquals("testUser", apiResponse.getData().getUsername());
-
-        String authToken = mvcResult.getResponse().getHeader("Authorization");
+        String authToken = result.andReturn().getResponse().getHeader("Authorization");
         assertEquals("testToken", authToken);
     }
 

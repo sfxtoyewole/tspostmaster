@@ -40,12 +40,12 @@ class AuthControllerIntegrationTest extends AbstractIntegrationTest {
         signUpRequest.setUsername("username");
         signUpRequest.setPassword("password");
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/pm/signup")
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/access/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(signUpRequest)));
 
 
-        result.andExpect(MockMvcResultMatchers.status().isOk());
+        result.andExpect(MockMvcResultMatchers.status().isCreated());
         result.andExpect(MockMvcResultMatchers.jsonPath("$.status").isBoolean());
         result.andExpect(MockMvcResultMatchers.jsonPath("$.data.token").isNotEmpty());
 
@@ -55,5 +55,27 @@ class AuthControllerIntegrationTest extends AbstractIntegrationTest {
 
     }
 
+    @Test
+    void givenValidRequest_whenSigningIn_shouldReturnSignUpToken() throws Exception {
+
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setEmail("test@gmail.com");
+        signUpRequest.setUsername("username");
+        signUpRequest.setPassword("password");
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/access/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(signUpRequest)));
+
+
+        result.andExpect(MockMvcResultMatchers.status().isCreated());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.status").isBoolean());
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.data.token").isNotEmpty());
+
+        Optional<PMUser> optionalPMUser = ipmUserRepository.findPMUserByEmailOrUsername(signUpRequest.getEmail());
+
+        Assertions.assertTrue(optionalPMUser.isPresent());
+
+    }
 
 }

@@ -46,7 +46,7 @@ public class UserService {
     }
 
     public ApiResp<AuthDto> createUser(SignUpRequest signUpRequest) {
-        if (isUserExists(signUpRequest.getUsername())) {
+            if (isUserExists(signUpRequest.getUsername())) {
             throw new CustomException("Username is already taken!", HttpStatus.CONFLICT);
         }
 
